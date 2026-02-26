@@ -14,29 +14,31 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Skip caching for node_modules and specific problematic files
-  if (event.request.url.includes('node_modules') || 
-      event.request.url.includes('lucide-react') ||
-      event.request.url.includes('.pnpm') ||
-      event.request.url.includes('?v=')) {
+  // Only cache GET requests
+  if (event.request.method !== 'GET') {
     return;
   }
-  
+
+  // Skip caching for analytics and specific problematic files
+  if (event.request.url.includes('node_modules') ||
+    event.request.url.includes('lucide-react') ||
+    event.request.url.includes('.pnpm') ||
+    event.request.url.includes('?v=') ||
+    event.request.url.includes('goatcounter.com') ||
+    event.request.url.includes('gc.zgo.at')) {
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request)
       .then((response) => {
         if (response) {
           return response;
         }
-        return fetch(event.request).catch(() => {
-          // Fallback for failed requests
-          return new Response('', { status: 404 });
-        });
-      })
-      .catch(() => {
-        // Fallback for cache errors
-        return fetch(event.request).catch(() => {
-          return new Response('', { status: 404 });
+        return fetch(event.request).catch((error) => {
+          // Allow the network error to propagate naturally 
+          // instead of masking it as a 404 response
+          throw error;
         });
       })
   );
