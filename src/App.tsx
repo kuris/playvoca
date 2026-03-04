@@ -180,11 +180,10 @@ function App() {
       try {
         console.log('[Supabase Test] DB 연결 테스트 시작');
         // hanja_characters 테이블에서 1개만 조회
-        const { data, error } = await import('./lib/supabase').then(mod => mod.supabase
+        const { data, error } = await supabase
           .from('hanja_characters')
           .select('*')
-          .limit(1)
-        );
+          .limit(1);
         console.log('[Supabase Test] 결과:', { data, error });
         if (error) {
           console.error('[Supabase Test] DB 연결 에러:', error);
@@ -239,9 +238,10 @@ function App() {
     'random-quiz': 'toeic', // 기본값, 실제 랜덤은 아래에서 처리
   };
   const [tab, setTab] = useState('toeic');
-  // 탭이 변경될 때마다 인덱스 초기화
+  // 탭이 변경될 때마다 인덱스를 0으로 리셋하고, 랜덤 초기화 플래그도 리셋
   React.useEffect(() => {
     setCurrentWordIndex(0);
+    setInitializedForCategory(null);
   }, [tab]);
   // mode에 따라 tab을 자동으로 맞추는 대신, tab은 카테고리만 담당
   const category = tabToCategory[tab];
@@ -264,25 +264,23 @@ function App() {
     }
   }, [words.length, currentWordIndex]);
 
-  // 단어 리스트가 바뀔 때마다 인덱스 초기화 (랜덤탭이면 랜덤)
+  // 단어 리스트가 처음 로드될 때 항상 랜덤 인덱스로 시작
+  const [initializedForCategory, setInitializedForCategory] = React.useState<string | null>(null);
   React.useEffect(() => {
-    if (words.length > 0) {
-      console.log(`모드 변경/단어 로드: mode=${mode}, category=${category}, words.length=${words.length}`);
-      if (mode === 'random-study' || mode === 'random-quiz') {
-        // 랜덤 모드: 현재 카테고리 내에서 랜덤 인덱스 생성
+    if (words.length > 0 && initializedForCategory !== category) {
+      // 새 카테고리의 단어가 처음 로드됐을 때 랜덤 위치로 이동
+      const randomIndex = Math.floor(Math.random() * words.length);
+      console.log(`카테고리 ${category} 랜덤 시작: ${words.length}개 단어 중 ${randomIndex}번째`);
+      setCurrentWordIndex(randomIndex);
+      setInitializedForCategory(category);
+    } else if (mode === 'random-study' || mode === 'random-quiz') {
+      // 랜덤 모드 전환 시에도 랜덤 인덱스
+      if (words.length > 0) {
         const randomIndex = Math.floor(Math.random() * words.length);
-        console.log(`랜덤 모드 초기화: ${category} 카테고리에서 ${words.length}개 단어 중 ${randomIndex}번째 선택`);
         setCurrentWordIndex(randomIndex);
-      } else {
-        // 일반 모드에서는 단어 리스트가 바뀌어도 인덱스 유지
-        // 단, 현재 인덱스가 범위를 벗어나면 마지막 단어로 보정
-        setCurrentWordIndex((prev) => {
-          if (prev >= words.length) return words.length - 1;
-          return prev;
-        });
       }
     }
-  }, [words, mode, category]);
+  }, [words, mode, category, initializedForCategory]);
   // Always call useComments, even if currentWord is undefined
   const { comments, loading, error, addComment, deleteComment, refetch } = useComments(currentWord?.id ?? 0);
 
