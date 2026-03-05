@@ -238,9 +238,8 @@ function App() {
     'random-quiz': 'toeic', // 기본값, 실제 랜덤은 아래에서 처리
   };
   const [tab, setTab] = useState('toeic');
-  // 탭이 변경될 때마다 인덱스를 0으로 리셋하고, 랜덤 초기화 플래그도 리셋
+  // 탭이 변경될 때마다 랜덤 초기화 플래그만 리셋 (인덱스는 words 로드 후 랜덤으로 설정됨)
   React.useEffect(() => {
-    setCurrentWordIndex(0);
     setInitializedForCategory(null);
   }, [tab]);
   // mode에 따라 tab을 자동으로 맞추는 대신, tab은 카테고리만 담당
