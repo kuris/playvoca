@@ -69,9 +69,32 @@
     return data.user;
   }
 
+  // ---------- 콜백 & 리디렉션 주소 관리 (한자/보카 분리) ----------
+  function getVocaRedirectUrl() {
+    if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+      return location.origin + '/login.html';
+    }
+    return 'https://voca.chatgpts.kr/login.html';
+  }
+
+  // 로그인 후 브라우저 주소창의 지저분한 hash(#access_token=...) 또는 code= 파라미터를 깨끗하게 정리
+  function cleanCallbackUrl() {
+    try {
+      if (window.location.hash && (window.location.hash.includes('access_token=') || window.location.hash.includes('refresh_token=') || window.location.hash.includes('error='))) {
+        window.history.replaceState(null, '', window.location.pathname + window.location.search);
+      }
+      if (window.location.search && window.location.search.includes('code=')) {
+        const url = new URL(window.location.href);
+        url.searchParams.delete('code');
+        const qs = url.searchParams.toString();
+        window.history.replaceState(null, '', url.pathname + (qs ? '?' + qs : '') + url.hash);
+      }
+    } catch (e) {}
+  }
+
   async function signInWithGoogle(redirectTo) {
     if (!isReady()) throw new Error('서버 연결을 준비하지 못했어요.');
-    const target = redirectTo || (location.origin + '/login.html');
+    const target = redirectTo || getVocaRedirectUrl();
     const { error } = await sb().auth.signInWithOAuth({
       provider: 'google',
       options: { redirectTo: target }
@@ -91,7 +114,7 @@
   async function resetPassword(email) {
     if (!isReady()) throw new Error('서버 연결을 준비하지 못했어요.');
     const { error } = await sb().auth.resetPasswordForEmail(email, {
-      redirectTo: location.origin + '/login.html'
+      redirectTo: getVocaRedirectUrl()
     });
     if (error) throw error;
   }
@@ -312,6 +335,19 @@
       if (chip && dropdown) {
         chip.addEventListener('click', (e) => {
           e.stopPropagation();
+          // 햄버거 모바일 메뉴가 열려있다면 닫기
+          const mainNav = document.getElementById('main-nav');
+          const navToggle = document.getElementById('nav-toggle');
+          if (mainNav && mainNav.classList.contains('open')) {
+            mainNav.classList.remove('open');
+            document.body.classList.remove('nav-open');
+            if (navToggle) {
+              navToggle.setAttribute('aria-expanded', 'false');
+              navToggle.setAttribute('aria-label', '메뉴 열기');
+              const icon = navToggle.querySelector('i');
+              if (icon) icon.className = 'fa-solid fa-bars';
+            }
+          }
           dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
         });
         document.addEventListener('click', () => { dropdown.style.display = 'none'; });
@@ -345,6 +381,7 @@
       const { data } = await sb().auth.getSession();
       if (data && data.session && data.session.user) {
         currentUser = data.session.user;
+        cleanCallbackUrl();
         await ensureMembership();
         await loadProfile();
         syncProgressOnLogin();
@@ -360,6 +397,7 @@
       const user = session ? session.user : null;
       currentUser = user;
       if (user) {
+        cleanCallbackUrl();
         await ensureMembership();
         await loadProfile();
         syncProgressOnLogin();

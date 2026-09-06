@@ -13,7 +13,7 @@
       "has": [
         {
           "type": "host",
-          "value": "magicvoca.vercel.app"
+          "value": ".*\\.vercel\\.app"
         }
       ],
       "destination": "https://voca.chatgpts.kr/$1",

@@ -92,15 +92,21 @@
     }
 
     function openNav() {
+      // 사용자 메뉴가 열려있다면 닫기
+      const userDropdown = document.getElementById('user-menu-dropdown');
+      if (userDropdown) userDropdown.style.display = 'none';
+
       mainNav.classList.add('open');
       document.body.classList.add('nav-open');
       navToggle.setAttribute('aria-expanded', 'true');
+      navToggle.setAttribute('aria-label', '메뉴 닫기');
       if (icon) icon.className = 'fa-solid fa-xmark';
     }
     function closeNav() {
       mainNav.classList.remove('open');
       document.body.classList.remove('nav-open');
       navToggle.setAttribute('aria-expanded', 'false');
+      navToggle.setAttribute('aria-label', '메뉴 열기');
       if (icon) icon.className = 'fa-solid fa-bars';
       closeAllDropdowns();
     }
@@ -127,7 +133,7 @@
     mainNav.querySelectorAll('a').forEach(a => a.addEventListener('click', closeNav));
 
     document.addEventListener('click', function (e) {
-      if (mainNav.contains(e.target) || (header && header.contains(e.target))) return;
+      if (mainNav.contains(e.target) || navToggle.contains(e.target)) return;
       closeAllDropdowns();
       if (mainNav.classList.contains('open')) closeNav();
     });
