@@ -77,13 +77,42 @@ function extractMnemonicsFromDump() {
   return mnemonicsByWord;
 }
 
-// 마크다운 잔여 기호 정제 (*알리다* -> 알리다)
+function extractPos(str) {
+  if (!str) return '';
+  const m = str.trim().match(/^([a-z]{1,4})\s*[\.\,\:]/i);
+  if (!m) return '';
+  const p = m[1].toLowerCase();
+  if (p === 'v') return '동사';
+  if (p === 'n') return '명사';
+  if (p === 'adj' || p === 'a') return '형용사';
+  if (p === 'adv' || p === 'ad') return '부사';
+  if (p === 'prep') return '전치사';
+  if (p === 'conj') return '접속사';
+  if (p === 'pron') return '대명사';
+  if (p === 'int') return '감탄사';
+  return p;
+}
+
+// 마크다운 잔여 기호 및 품사 약어 정제
 function cleanMeaning(str) {
   if (!str) return '';
-  return str
-    .replace(/\*+/g, '') // 별표 제거
-    .replace(/\s{2,}/g, ' ') // 다중 공백 정리
-    .trim();
+  let s = str.replace(/\*+/g, ''); // 별표 마크다운 제거
+  // 선행 품사 기호 제거 (v., n., ad., v ., adj., adv., prep. 등)
+  s = s.replace(/^[a-z]{1,4}\s*[\.\,\:]\s*/i, '');
+  s = s.replace(/(;\s*)[a-z]{1,4}\s*[\.\,\:]\s*/gi, '$1');
+  // 콜론을 쉼표로 변환
+  s = s.replace(/\s*:\s*/g, ', ');
+  // 괄호 앞뒤 공백 정제
+  s = s.replace(/\(\s+/g, '(').replace(/\s+\)/g, ')');
+  // 비정상적으로 벌어진 조사 및 서술어 어미 결합
+  s = s.replace(/([가-힣]+)\s+(를|을|의|에|에서|로|으로|와|과|이|가|도|는|은)(?=[^가-힣a-zA-Z0-9]|$)/g, '$1$2');
+  s = s.replace(/([가-힣]+)\s+(하다|되다|받다|보다|시키다|주다|내다|두다|않다)(?=[^가-힣a-zA-Z0-9]|$)/g, '$1$2');
+  s = s.replace(/불가\s+산/g, '불가산');
+  s = s.replace(/가\s+산/g, '가산');
+  s = s.replace(/알아\s+봄/g, '알아봄');
+  s = s.replace(/\s{2,}/g, ' ').trim();
+  s = s.replace(/[\,\.\;]+$/, '').trim();
+  return s;
 }
 
 // 영어 단어 CSV 파싱 (다중 줄 정의 병합)
@@ -134,6 +163,7 @@ function parseEnglishCsv(filePath, catId, mnemonicsMap) {
       currentWordObj.meaning += '; ' + addText;
     } else {
       if (col0 && /[a-zA-Z]/.test(col0)) {
+        const pos = extractPos(col1) || extractPos(col0) || '';
         const cleanedM = cleanMeaning(col1);
         const lowerEng = col0.toLowerCase();
         currentWordObj = {
@@ -141,6 +171,7 @@ function parseEnglishCsv(filePath, catId, mnemonicsMap) {
           word: col0,
           meaning: cleanedM,
           pron: '',
+          pos: pos,
           tip: mnemonicsMap[lowerEng] || '',
           lang: 'en'
         };

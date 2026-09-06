@@ -43,7 +43,8 @@ const staticFiles = [
   'sitemap.xml',
   'vercel.json',
   'favicon.ico',
-  'coupang_banner.png'
+  'coupang_banner.png',
+  'ads.txt'
 ];
 
 for (const file of staticFiles) {

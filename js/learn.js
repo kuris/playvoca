@@ -111,7 +111,10 @@ document.addEventListener('DOMContentLoaded', function () {
       return `
         <div class="word-card ${isLearned ? 'learned' : ''}" data-id="${w.id}">
           <div class="wc-top">
-            <div class="wc-word">${escapeHtml(w.word)}</div>
+            <div class="wc-word">
+              ${escapeHtml(w.word)}
+              ${w.pos ? `<span class="badge badge-blue" style="font-size:0.75rem;margin-left:6px;vertical-align:middle;">${escapeHtml(w.pos)}</span>` : ''}
+            </div>
             <div class="wc-actions">
               <button class="btn-star ${isBookmarked ? 'active' : ''}" data-id="${w.id}" title="내 단어장에 별표 추가">
                 <i class="${isBookmarked ? 'fa-solid' : 'fa-regular'} fa-star"></i>

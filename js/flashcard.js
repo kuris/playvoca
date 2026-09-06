@@ -72,6 +72,16 @@ document.addEventListener('DOMContentLoaded', function () {
     if (fcPronEl) fcPronEl.textContent = current.pron || '';
     if (fcMeaningEl) fcMeaningEl.textContent = current.meaning;
 
+    const posBadge = document.getElementById('fc-pos-badge');
+    if (posBadge) {
+      if (current.pos) {
+        posBadge.textContent = current.pos;
+        posBadge.style.display = 'inline-block';
+      } else {
+        posBadge.style.display = 'none';
+      }
+    }
+
     // 연상기법 (사전 수록 tip)
     const fcMnemonicEl = document.getElementById('fc-mnemonic');
     const fcMnemonicText = document.getElementById('fc-mnemonic-text');

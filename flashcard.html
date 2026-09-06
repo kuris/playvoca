@@ -10,6 +10,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Outfit:wght@500;700;800&family=Noto+Sans+KR:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
 <link rel="stylesheet" href="css/style.css">
+  <meta name="google-adsense-account" content="ca-pub-3321070604000141">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3321070604000141&tfat=1" crossorigin="anonymous"></script>
+  <script>
+    (window.adsbygoogle = window.adsbygoogle || []).requestNonPersonalizedAds = 1;
+  </script>
 </head>
 <body>
 
@@ -72,10 +77,13 @@
 
         <!-- 뒷면 (뜻 & 연상고리) -->
         <div class="fc-face fc-back">
-          <div style="font-size: 0.95rem; color: #8c8075; margin-bottom: 8px; font-weight: 700;">한국어 뜻</div>
+          <div style="font-size: 0.95rem; color: #64748b; margin-bottom: 8px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <span>한국어 뜻</span>
+            <span id="fc-pos-badge" class="badge badge-blue" style="display:none; font-size:0.75rem;"></span>
+          </div>
           <div class="fc-meaning" id="fc-meaning">잘 아는, 박식한</div>
-          <div id="fc-mnemonic" style="margin-top: 14px; max-width: 90%; background: #fff9ee; border: 1.5px solid #ffe0ad; border-radius: 12px; padding: 10px 16px; font-size: 0.88rem; color: #5c4228; text-align: left; display: none;">
-            <div style="font-size: 0.74rem; font-weight: 800; background: #ffb703; color: #3b2800; padding: 2px 8px; border-radius: 999px; display: inline-flex; align-items: center; gap: 4px; margin-bottom: 4px;">
+          <div id="fc-mnemonic" style="margin-top: 14px; max-width: 90%; background: #f0f7ff; border: 1.5px solid #bfdbfe; border-radius: 12px; padding: 10px 16px; font-size: 0.88rem; color: #1e3a8a; text-align: left; display: none;">
+            <div style="font-size: 0.74rem; font-weight: 800; background: #3b82f6; color: #fff; padding: 2px 8px; border-radius: 999px; display: inline-flex; align-items: center; gap: 4px; margin-bottom: 4px;">
               <i class="fa-solid fa-lightbulb"></i> 연상고리
             </div>
             <p id="fc-mnemonic-text" style="margin: 0; font-weight: 600;"></p>
@@ -149,5 +157,7 @@
 <script src="js/nav.js"></script>
 <script src="js/flashcard.js"></script>
 
+  <script defer src="/_vercel/insights/script.js"></script>
+  <script defer src="/_vercel/speed-insights/script.js"></script>
 </body>
 </html>
