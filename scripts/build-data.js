@@ -14,10 +14,13 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '..');
 
-// 1. DB 덤프에서 2-pass로 AI 연상고리(기억법) 추출
+import { CURATED_MNEMONICS } from './curated-mnemonics.js';
+
+// 1. DB 덤프에서 2-pass로 AI 연상고리(기억법) 추출 및 큐레이션 사전 병합
 function extractMnemonicsFromDump() {
   const dumpPath = path.join(rootDir, 'db_backup', 'dump-postgres-202509100910.sql');
-  if (!fs.existsSync(dumpPath)) return {};
+  const mnemonicsByWord = { ...CURATED_MNEMONICS };
+  if (!fs.existsSync(dumpPath)) return mnemonicsByWord;
 
   const dumpContent = fs.readFileSync(dumpPath, 'utf-8');
   const lines = dumpContent.split('\n');
@@ -63,10 +66,9 @@ function extractMnemonicsFromDump() {
     }
   }
 
-  const mnemonicsByWord = {};
   for (const item of commentsList) {
     const eng = wordIdToEng[item.wId];
-    if (eng && (item.author.includes('AI 도우미') || item.content.includes('상상해') || item.content.includes('발음'))) {
+    if (eng && (item.author.includes('AI 도우미') || item.content.includes('상상해') || item.content.includes('발음') || item.content.length > 15)) {
       if (!mnemonicsByWord[eng] || mnemonicsByWord[eng].length < item.content.length) {
         mnemonicsByWord[eng] = item.content;
       }
@@ -112,6 +114,7 @@ function cleanMeaning(str) {
   s = s.replace(/알아\s+봄/g, '알아봄');
   s = s.replace(/\s{2,}/g, ' ').trim();
   s = s.replace(/[\,\.\;]+$/, '').trim();
+  s = s.replace(/;\s*;/g, ';').replace(/^\s*;\s*|\s*;\s*$/g, '');
   return s;
 }
 
@@ -155,14 +158,27 @@ function parseEnglishCsv(filePath, catId, mnemonicsMap) {
     // 한글로 시작하거나 번호/품사로만 시작하는 줄은 이전 단어의 추가 뜻으로 병합
     const isContinuation = 
       /^[가-힣]/.test(col0) || 
-      /^([0-9]+\.|\b(n|v|a|ad|adj|prep|pron|conj|int)\.)\s*[가-힣]/.test(col0) ||
-      /^(=|\(|\[)/.test(col0);
+      /^[=\(\[\<\*\~\d]/.test(col0) ||
+      /^[a-zA-Z]{1,4}\s*[\.\,\:]\s*[\d\.\*\<\(\[\s]*[가-힣]/.test(col0) ||
+      (/[가-힣]/.test(col0) && !/^[a-zA-Z\s\-\'\/\.\,\(\)]+$/.test(col0) && !/^[a-zA-Z]{2,}\s+(in|to|with|from|of|for|목적어|시간|결과|사람|장소|명사)/.test(col0));
 
     if (isContinuation && currentWordObj) {
       const addText = cleanMeaning(col0 + (col1 ? ', ' + col1 : ''));
-      currentWordObj.meaning += '; ' + addText;
+      if (addText) {
+        currentWordObj.meaning += '; ' + addText;
+      }
     } else {
       if (col0 && /[a-zA-Z]/.test(col0)) {
+        col0 = col0
+          .replace(/시간\s*\/\s*돈/g, '[시간/돈]')
+          .replace(/복수\s*명사/g, '[복수명사]')
+          .replace(/목적어/g, '[목적어]')
+          .replace(/결과/g, '[결과]')
+          .replace(/원인/g, '[원인]')
+          .replace(/장소/g, '[장소]')
+          .replace(/사람/g, '[사람]')
+          .replace(/명사/g, '[명사]');
+
         const pos = extractPos(col1) || extractPos(col0) || '';
         const cleanedM = cleanMeaning(col1);
         const lowerEng = col0.toLowerCase();
@@ -180,7 +196,18 @@ function parseEnglishCsv(filePath, catId, mnemonicsMap) {
     }
   }
 
-  return results;
+  // 중복 단어 정제 (동일 단어 + 동일 뜻 중복 행 제거)
+  const seen = new Set();
+  const uniqueResults = [];
+  for (const item of results) {
+    const key = (item.word + '___' + item.meaning).toLowerCase();
+    if (!seen.has(key)) {
+      seen.add(key);
+      uniqueResults.push(item);
+    }
+  }
+
+  return uniqueResults;
 }
 
 // 태국어 HTML 테이블 파싱
