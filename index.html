@@ -1,46 +1,182 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko">
-  <head>
-    <meta charset="UTF-8" />
-  <!-- <link rel="icon" type="image/svg+xml" href="/favicon.ico" /> -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MagicVoca - 마법의 단어학습</title>
-    
-    <!-- PWA Meta Tags -->
-    <link rel="manifest" href="/app.webmanifest" />
-    <meta name="theme-color" content="#667eea" />
-    <meta name="description" content="마법처럼 쉽고 재미있는 영어, 한국어, 태국어 단어 학습 앱" />
-    
-    <!-- Apple PWA Meta Tags -->
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <meta name="apple-mobile-web-app-title" content="MagicVoca" />
-  <!-- <link rel="apple-touch-icon" href="/favicon.ico" /> -->
-    
-    <!-- Microsoft PWA Meta Tags -->
-    <meta name="msapplication-TileColor" content="#667eea" />
-    <meta name="msapplication-config" content="/browserconfig.xml" />
-  <script data-goatcounter="https://chriskim.goatcounter.com/count"
-      async src="//gc.zgo.at/count.js"></script>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-    
-    <!-- PWA Service Worker -->
-    <script>
-      // PWA Service Worker 등록 (운영 환경)
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', function() {
-          navigator.serviceWorker.register('/sw.js')
-            .then(function(registration) {
-              console.log('ServiceWorker registration successful:', registration);
-            })
-            .catch(function(error) {
-              console.log('ServiceWorker registration failed:', error);
-            });
-        });
-      }
-    </script>
-  </body>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>단어야 놀자! (PlayVoca) - 초등·수능·토익·공무원 필수 영단어</title>
+<meta name="description" content="토익, 토플, 수능, 공무원, G-TELP, 기초회화까지 1만 1천 개 필수 단어를 원어민 발음과 3D 플래시카드, 4지선다 퀴즈로 재미있게 마스터하는 단어 학습 사이트">
+<link rel="canonical" href="https://voca.chatgpts.kr/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Outfit:wght@500;700;800&family=Noto+Sans+KR:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="nav-wrap">
+    <a href="index.html" class="logo">
+      <span class="logo-badge">V</span>
+      <span>단어야 놀자!</span>
+    </a>
+    <button class="nav-toggle" id="nav-toggle" aria-label="메뉴 열기"><i class="fa-solid fa-bars"></i></button>
+    <nav class="main-nav" id="main-nav"></nav>
+  </div>
+</header>
+
+<main>
+  <!-- ================= HERO ================= -->
+  <section class="hero">
+    <div class="container hero-grid">
+      <div class="hero-text">
+        <span class="hero-badge">✨ 11,000개 필수 어휘 완벽 수록</span>
+        <h1>단어가 <span>마법처럼</span><br>머릿속에 쏙!<br>재미있게 익히는 어휘</h1>
+        <p class="lead">
+          토익, 토플, 수능, 공무원, 기초회화까지!<br>
+          원어민 발음과 3D 깜빡이 플래시카드, 흥미진진한 퀴즈로<br>
+          지루한 단어 암기를 매일 10분 즐거운 놀이로 바꿔보세요.
+        </p>
+        <div class="hero-actions">
+          <a href="learn.html" class="btn btn-primary"><i class="fa-solid fa-book-open"></i> 단어 학습 시작</a>
+          <a href="flashcard.html" class="btn btn-secondary"><i class="fa-solid fa-bolt"></i> 플래시카드 깜빡이</a>
+          <a href="quiz.html" class="btn btn-outline"><i class="fa-solid fa-puzzle-piece"></i> 4지선다 퀴즈</a>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <!-- 오늘의 추천 단어 대형 카드 -->
+        <div class="hero-card">
+          <div class="hc-header">
+            <span class="hc-title"><i class="fa-solid fa-wand-magic-sparkles"></i> 오늘의 추천 단어</span>
+            <span class="badge badge-orange" id="hero-cat-badge">TOEIC</span>
+          </div>
+          <div class="hc-word-box">
+            <div class="hc-word" id="hero-word">knowledgeable</div>
+            <div class="hc-pron" id="hero-pron">ad. (사람 수식) 아는 것이 많은</div>
+            <div class="hc-meaning" id="hero-meaning">잘 아는, 박식한</div>
+          </div>
+          <div class="hc-tools">
+            <button class="btn-speaker" id="hero-speaker-btn" title="원어민 발음 듣기">
+              <i class="fa-solid fa-volume-high"></i>
+            </button>
+            <button class="btn btn-outline" id="hero-next-btn" style="padding:8px 18px;font-size:0.9rem;">
+              <i class="fa-solid fa-rotate"></i> 다른 단어 보기
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 학습 통계 요약 ================= -->
+  <section style="padding: 10px 0 30px;">
+    <div class="container">
+      <div style="background:#fff;border-radius:var(--radius-md);padding:20px 30px;border:1.5px solid var(--color-border);display:flex;justify-content:space-around;align-items:center;flex-wrap:wrap;gap:20px;box-shadow:var(--shadow-soft);">
+        <div style="text-align:center;">
+          <div style="font-size:0.88rem;color:#796c61;margin-bottom:4px;"><i class="fa-solid fa-database"></i> 전체 수록 어휘</div>
+          <div style="font-size:1.8rem;font-weight:800;color:var(--color-primary-dark);font-family:var(--font-en);" id="stat-total-count">11,068</div>
+        </div>
+        <div style="width:1px;height:40px;background:#f0e4d0;"></div>
+        <div style="text-align:center;">
+          <div style="font-size:0.88rem;color:#796c61;margin-bottom:4px;"><i class="fa-solid fa-circle-check" style="color:var(--color-secondary);"></i> 내 암기 완료</div>
+          <div style="font-size:1.8rem;font-weight:800;color:var(--color-secondary);font-family:var(--font-en);" id="stat-learned-count">0</div>
+        </div>
+        <div style="width:1px;height:40px;background:#f0e4d0;"></div>
+        <div style="text-align:center;">
+          <div style="font-size:0.88rem;color:#796c61;margin-bottom:4px;"><i class="fa-solid fa-star" style="color:#ffb703;"></i> 내 북마크 단어</div>
+          <div style="font-size:1.8rem;font-weight:800;color:#ffb703;font-family:var(--font-en);" id="stat-bookmark-count">0</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 카테고리 둘러보기 ================= -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">CATEGORIES</span>
+        <h2>어떤 어휘를 학습하고 싶으신가요?</h2>
+        <p>목적에 맞는 단어장을 선택해 바로 학습을 시작해보세요.</p>
+      </div>
+
+      <div class="category-grid" id="category-grid">
+        <!-- JS로 동적 렌더링 -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 주요 기능 안내 ================= -->
+  <section class="section" style="background:#fffcf6;border-top:1.5px solid var(--color-border);border-bottom:1.5px solid var(--color-border);">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">FEATURES</span>
+        <h2>단어 암기를 완성하는 4가지 학습 도구</h2>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:24px;">
+        <div style="background:#fff;padding:26px;border-radius:var(--radius-md);border:1.5px solid var(--color-border);box-shadow:var(--shadow-soft);">
+          <div style="font-size:2.2rem;margin-bottom:14px;">📖</div>
+          <h3 style="margin:0 0 8px;font-size:1.25rem;">전체 단어장</h3>
+          <p style="margin:0;color:var(--color-text-soft);font-size:0.95rem;line-height:1.6;">
+            카테고리별 단어를 한눈에 보고 뜻 가리기 모드와 발음 듣기로 꼼꼼히 학습해요.
+          </p>
+          <a href="learn.html" style="display:inline-block;margin-top:14px;color:var(--color-primary);font-weight:700;">학습하기 &rarr;</a>
+        </div>
+
+        <div style="background:#fff;padding:26px;border-radius:var(--radius-md);border:1.5px solid var(--color-border);box-shadow:var(--shadow-soft);">
+          <div style="font-size:2.2rem;margin-bottom:14px;">⚡</div>
+          <h3 style="margin:0 0 8px;font-size:1.25rem;">플래시카드 깜빡이</h3>
+          <p style="margin:0;color:var(--color-text-soft);font-size:0.95rem;line-height:1.6;">
+            3D 카드를 넘기며 자동 재생 타이머와 함께 단어를 직관적으로 머릿속에 각인해요.
+          </p>
+          <a href="flashcard.html" style="display:inline-block;margin-top:14px;color:var(--color-primary);font-weight:700;">깜빡이 시작 &rarr;</a>
+        </div>
+
+        <div style="background:#fff;padding:26px;border-radius:var(--radius-md);border:1.5px solid var(--color-border);box-shadow:var(--shadow-soft);">
+          <div style="font-size:2.2rem;margin-bottom:14px;">🧩</div>
+          <h3 style="margin:0 0 8px;font-size:1.25rem;">4지선다 퀴즈</h3>
+          <p style="margin:0;color:var(--color-text-soft);font-size:0.95rem;line-height:1.6;">
+            실전 시험처럼 뜻 맞추기 문제를 풀고 틀린 단어는 오답노트에 자동으로 보관해요.
+          </p>
+          <a href="quiz.html" style="display:inline-block;margin-top:14px;color:var(--color-primary);font-weight:700;">퀴즈 풀기 &rarr;</a>
+        </div>
+
+        <div style="background:#fff;padding:26px;border-radius:var(--radius-md);border:1.5px solid var(--color-border);box-shadow:var(--shadow-soft);">
+          <div style="font-size:2.2rem;margin-bottom:14px;">📄</div>
+          <h3 style="margin:0 0 8px;font-size:1.25rem;">A4 단어 연습장</h3>
+          <p style="margin:0;color:var(--color-text-soft);font-size:0.95rem;line-height:1.6;">
+            출력해서 손으로 직접 쓰는 깜지와 시험지를 버튼 하나로 바로 인쇄하거나 PDF로 저장해요.
+          </p>
+          <a href="worksheet.html" style="display:inline-block;margin-top:14px;color:var(--color-primary);font-weight:700;">연습장 인쇄 &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-links">
+      <a href="index.html">홈</a>
+      <a href="learn.html">단어 학습</a>
+      <a href="flashcard.html">플래시카드</a>
+      <a href="quiz.html">퀴즈</a>
+      <a href="bookmark.html">내 단어장</a>
+      <a href="worksheet.html">A4 연습장</a>
+      <a href="login.html">내 학습실</a>
+    </div>
+    <p>&copy; 2026 단어야 놀자! (PlayVoca) - <a href="https://voca.chatgpts.kr/">voca.chatgpts.kr</a>. All rights reserved.</p>
+  </div>
+</footer>
+
+<!-- Supabase CDN & Core Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/voca-data.js"></script>
+<script src="js/tts.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/main.js"></script>
+
+</body>
 </html>

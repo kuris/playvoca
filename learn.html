@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>전체 단어 학습관 - 단어야 놀자!</title>
+<meta name="description" content="토익, 토플, 수능, 공무원, G-TELP, 기초회화 카테고리별 단어를 뜻 가리기 모드와 발음 듣기, 북마크로 꼼꼼하게 암기해요.">
+<link rel="canonical" href="https://voca.chatgpts.kr/learn.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Outfit:wght@500;700;800&family=Noto+Sans+KR:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="nav-wrap">
+    <a href="index.html" class="logo">
+      <span class="logo-badge">V</span>
+      <span>단어야 놀자!</span>
+    </a>
+    <button class="nav-toggle" id="nav-toggle" aria-label="메뉴 열기"><i class="fa-solid fa-bars"></i></button>
+    <nav class="main-nav" id="main-nav"></nav>
+  </div>
+</header>
+
+<main class="section" style="padding-top: 36px;">
+  <div class="container">
+    <div class="section-head" style="margin-bottom: 24px;">
+      <span class="eyebrow">VOCABULARY DRILL</span>
+      <h2>스마트 어휘 학습관</h2>
+      <p>카테고리를 고르고 단어 카드와 원어민 발음으로 차근차근 암기해보세요.</p>
+    </div>
+
+    <!-- 툴바 (카테고리 탭, 검색, 뜻 가리기/미암기 토글) -->
+    <div class="learn-toolbar">
+      <div class="category-tabs" id="category-tabs">
+        <!-- JS 생성 -->
+      </div>
+
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <button class="btn btn-outline" id="toggle-mask-btn" style="padding:8px 16px;font-size:0.88rem;">
+          <i class="fa-solid fa-eye"></i> 뜻 보기 모드
+        </button>
+        <button class="btn btn-outline" id="toggle-unlearned-btn" style="padding:8px 16px;font-size:0.88rem;">
+          <i class="fa-regular fa-circle-check"></i> 미암기 단어만
+        </button>
+
+        <div class="learn-search-wrap">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="learn-search" placeholder="단어 또는 뜻 검색...">
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding:0 4px;">
+      <span id="current-count-display" style="font-weight:700;color:var(--color-text-soft);font-size:0.92rem;">총 0개 단어</span>
+      <span style="font-size:0.85rem;color:#8c8075;">
+        <i class="fa-solid fa-circle-info"></i> 카드의 별표(⭐️)를 누르면 내 단어장에 추가됩니다.
+      </span>
+    </div>
+
+    <!-- 단어 카드 그리드 -->
+    <div class="word-list-grid" id="word-list-grid">
+      <!-- JS 생성 -->
+    </div>
+
+    <div style="text-align:center;margin-top:36px;">
+      <button class="btn btn-primary" id="load-more-btn" style="display:none;padding:12px 32px;">
+        <i class="fa-solid fa-angles-down"></i> 단어 더보기
+      </button>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-links">
+      <a href="index.html">홈</a>
+      <a href="learn.html">단어 학습</a>
+      <a href="flashcard.html">플래시카드</a>
+      <a href="quiz.html">퀴즈</a>
+      <a href="bookmark.html">내 단어장</a>
+      <a href="worksheet.html">A4 연습장</a>
+      <a href="login.html">내 학습실</a>
+    </div>
+    <p>&copy; 2026 단어야 놀자! (PlayVoca) - <a href="https://voca.chatgpts.kr/">voca.chatgpts.kr</a></p>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/voca-data.js"></script>
+<script src="js/tts.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/learn.js"></script>
+
+</body>
+</html>

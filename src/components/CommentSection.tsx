@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Comment } from '../types';
-import { MessageCircle, Send, Trash2, Lightbulb, Loader2, Sparkles, Wand2 } from 'lucide-react';
-import { generateMemoryTechnique } from '../lib/gemini';
+import { MessageCircle, Send, Trash2, Lightbulb, Loader2 } from 'lucide-react';
 import { Word } from '../types';
 
 interface CommentSectionProps {
@@ -39,7 +38,6 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
   const [newComment, setNewComment] = useState('');
   const [authorName, setAuthorName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,24 +49,6 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
         setAuthorName('');
       }
       setIsSubmitting(false);
-    }
-  };
-
-  const handleGenerateMemoryTechnique = async () => {
-    setIsGenerating(true);
-    try {
-      const technique = await generateMemoryTechnique(word.english, word.korean);
-      // 바로 DB에 저장
-      const success = await onAddComment(wordId, technique, 'AI 도우미 🤖');
-      if (success && refetchComments) {
-        refetchComments();
-      }
-      setNewComment('');
-      setAuthorName('');
-    } catch (error) {
-      alert(error instanceof Error ? error.message : 'AI 연상고리 생성에 실패했습니다.');
-    } finally {
-      setIsGenerating(false);
     }
   };
   const handleDelete = async (commentId: number) => {
@@ -129,20 +109,6 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
             className="flex-1 px-4 py-2 rounded-lg border border-gray-200 focus:border-purple-400 focus:ring-2 focus:ring-purple-100 outline-none transition-all"
             maxLength={20}
           />
-          <button
-            type="button"
-            onClick={handleGenerateMemoryTechnique}
-            disabled={isGenerating}
-            className="px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-lg hover:from-emerald-600 hover:to-teal-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2 whitespace-nowrap"
-            title="AI가 연상고리를 자동 생성해드려요!"
-          >
-            {isGenerating ? (
-              <Loader2 className="animate-spin" size={18} />
-            ) : (
-              <Wand2 size={18} />
-            )}
-            <span className="hidden sm:inline">AI 생성</span>
-          </button>
         </div>
         <div className="flex gap-3">
           <textarea
@@ -161,12 +127,6 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
             {isSubmitting ? <Loader2 className="animate-spin" size={18} /> : <Send size={18} />}
           </button>
         </div>
-        {isGenerating && (
-          <div className="mt-3 flex items-center gap-2 text-sm text-emerald-600">
-            <Sparkles className="animate-pulse" size={16} />
-            <span>AI가 창의적인 연상고리를 생성하고 있어요...</span>
-          </div>
-        )}
       </form>
 
       <div className="space-y-4">

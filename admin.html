@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>관리자 센터 - 단어야 놀자!</title>
+<link rel="canonical" href="https://voca.chatgpts.kr/admin.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Outfit:wght@500;700;800&family=Noto+Sans+KR:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="nav-wrap">
+    <a href="index.html" class="logo">
+      <span class="logo-badge">V</span>
+      <span>단어야 놀자!</span>
+    </a>
+    <button class="nav-toggle" id="nav-toggle" aria-label="메뉴 열기"><i class="fa-solid fa-bars"></i></button>
+    <nav class="main-nav" id="main-nav"></nav>
+  </div>
+</header>
+
+<main class="section" style="padding-top: 30px;">
+  <div class="container">
+
+    <!-- 0. 로딩 상태 -->
+    <div id="admin-loading" style="text-align: center; padding: 80px 20px;">
+      <div style="font-size: 2rem; margin-bottom: 10px;"><i class="fa-solid fa-spinner fa-spin" style="color:var(--color-primary);"></i></div>
+      <p style="color:#8c8075;">관리자 권한을 확인하고 있습니다...</p>
+    </div>
+
+    <!-- 1. 관리자 미로그인 시 로그인 뷰 -->
+    <div id="admin-auth-view" style="display:none; max-width: 420px; margin: 40px auto; background:#fff; padding:32px; border-radius:var(--radius-lg); border:1.5px solid var(--color-border); box-shadow:var(--shadow-soft);">
+      <div style="text-align: center; margin-bottom: 20px;">
+        <div style="font-size: 2.4rem; margin-bottom: 8px;">🔐</div>
+        <h2 style="margin: 0 0 6px;">관리자 로그인</h2>
+        <p style="font-size: 0.88rem; color:#8c8075; margin:0;">phiskim@gmail.com 계정 전용</p>
+      </div>
+
+      <form id="admin-login-form" class="auth-form">
+        <label>관리자 이메일
+          <input type="email" id="admin-email-input" required value="phiskim@gmail.com">
+        </label>
+        <label>비밀번호
+          <input type="password" id="admin-pass-input" required placeholder="비밀번호 입력">
+        </label>
+        <button type="submit" class="btn btn-primary auth-submit">로그인</button>
+      </form>
+
+      <div class="auth-oauth">
+        <div class="auth-divider"><span>또는</span></div>
+        <button type="button" class="btn-google" id="admin-google-btn">
+          구글 계정으로 관리자 로그인
+        </button>
+      </div>
+
+      <div id="admin-auth-msg" class="admin-msg"></div>
+    </div>
+
+    <!-- 2. 권한 없음 뷰 -->
+    <div id="admin-denied-view" style="display:none; max-width: 500px; margin: 50px auto; background:#fff; padding:36px; border-radius:var(--radius-lg); border:1.5px solid #ffccd2; text-align:center; box-shadow:var(--shadow-soft);">
+      <div style="font-size: 3rem; margin-bottom: 12px;">🚫</div>
+      <h2 style="margin: 0 0 8px; color: #d32f2f;">접근 권한이 없습니다</h2>
+      <p style="color: #666; font-size: 0.95rem; margin-bottom: 16px;">
+        현재 계정(<strong id="denied-user-email"></strong>)은 관리자 권한이 없습니다.<br>
+        관리자(phiskim@gmail.com) 계정으로 로그인해주세요.
+      </p>
+      <a href="index.html" class="btn btn-outline">홈으로 돌아가기</a>
+    </div>
+
+    <!-- 3. 관리자 대시보드 뷰 -->
+    <div id="admin-dashboard-view" style="display:none;">
+      <div class="admin-header">
+        <div class="admin-header-wrap">
+          <div class="admin-title-area">
+            <h1><i class="fa-solid fa-shield-halved" style="color:var(--color-primary);"></i> 관리자 센터 <span class="admin-badge-role">ADMIN</span></h1>
+          </div>
+          <div style="font-size: 0.9rem; color: #796c61;">
+            접속 계정: <strong id="admin-current-email" style="color:var(--color-text);"></strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- 통계 카드 요약 -->
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="sc-icon"><i class="fa-solid fa-users"></i></div>
+          <div class="sc-info">
+            <h4>총 서비스 회원</h4>
+            <div class="sc-value" id="stat-admin-members">0</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="sc-icon"><i class="fa-solid fa-calendar-day"></i></div>
+          <div class="sc-info">
+            <h4>오늘 페이지뷰 (PV)</h4>
+            <div class="sc-value" id="stat-admin-today">0</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="sc-icon"><i class="fa-solid fa-chart-line"></i></div>
+          <div class="sc-info">
+            <h4>누적 페이지뷰</h4>
+            <div class="sc-value" id="stat-admin-total-pv">0</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="sc-icon"><i class="fa-solid fa-trophy"></i></div>
+          <div class="sc-info">
+            <h4>퀴즈 응시 횟수</h4>
+            <div class="sc-value" id="stat-admin-quiz">0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 24시간 접속 시간대 분석 차트 -->
+      <div class="chart-card">
+        <h3><i class="fa-solid fa-clock"></i> 24시간 시간대별 접속 분포 (KST)</h3>
+        <div class="hourly-bars" id="hourly-bars-container">
+          <!-- JS 바 차트 생성 -->
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+        <!-- 회원 목록 카드 -->
+        <div class="chart-card">
+          <h3><i class="fa-solid fa-user-group"></i> 최근 가입 회원 목록</h3>
+          <div style="overflow-x: auto;">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>닉네임</th>
+                  <th>권한</th>
+                  <th>최근 접속</th>
+                  <th>가입일</th>
+                </tr>
+              </thead>
+              <tbody id="admin-members-tbody">
+                <!-- JS 생성 -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 실시간 페이지뷰 로그 -->
+        <div class="chart-card">
+          <h3><i class="fa-solid fa-eye"></i> 실시간 화면 조회수 로그</h3>
+          <div style="overflow-x: auto; max-height: 380px;">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>페이지명</th>
+                  <th>경로</th>
+                  <th>시간</th>
+                </tr>
+              </thead>
+              <tbody id="admin-pv-tbody">
+                <!-- JS 생성 -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/voca-data.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/admin.js"></script>
+
+</body>
+</html>

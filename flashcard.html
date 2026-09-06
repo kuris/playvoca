@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>플래시카드 깜빡이 - 단어야 놀자!</title>
+<meta name="description" content="카드를 뒤집으며 단어와 뜻을 빠르게 암기하는 3D 플래시카드 깜빡이 학습. 자동 넘김 모드와 원어민 발음 지원.">
+<link rel="canonical" href="https://voca.chatgpts.kr/flashcard.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Outfit:wght@500;700;800&family=Noto+Sans+KR:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="nav-wrap">
+    <a href="index.html" class="logo">
+      <span class="logo-badge">V</span>
+      <span>단어야 놀자!</span>
+    </a>
+    <button class="nav-toggle" id="nav-toggle" aria-label="메뉴 열기"><i class="fa-solid fa-bars"></i></button>
+    <nav class="main-nav" id="main-nav"></nav>
+  </div>
+</header>
+
+<main class="section" style="padding-top: 36px;">
+  <div class="container">
+    <div class="section-head" style="margin-bottom: 20px;">
+      <span class="eyebrow">FLASHCARD DRILL</span>
+      <h2>플래시카드 깜빡이</h2>
+      <p>카드를 클릭하거나 스페이스바를 눌러 뜻을 확인하고, 자동 넘김으로 빠르게 복습해요.</p>
+    </div>
+
+    <!-- 컨트롤 바 -->
+    <div style="max-width: 600px; margin: 0 auto 20px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; background: #fff; padding: 14px 20px; border-radius: var(--radius-md); border: 1.5px solid var(--color-border); box-shadow: var(--shadow-soft);">
+      <select id="fc-cat-select" style="padding: 8px 12px; border-radius: 8px; border: 1.5px solid var(--color-border); font-family: inherit; font-size: 0.92rem; font-weight: 700; background: #fff;">
+        <!-- JS 생성 -->
+      </select>
+
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <span id="fc-progress-text" style="font-weight: 800; font-size: 0.95rem; color: var(--color-primary-dark); font-family: var(--font-en);">1 / 1,350</span>
+        <button class="btn btn-outline" id="fc-shuffle-btn" style="padding: 7px 14px; font-size: 0.85rem;" title="단어 순서 무작위 섞기">
+          <i class="fa-solid fa-shuffle"></i> 섞기
+        </button>
+      </div>
+    </div>
+
+    <!-- 3D 플래시카드 무대 -->
+    <div class="flashcard-stage">
+      <div class="flashcard" id="flashcard">
+        <!-- 앞면 (단어) -->
+        <div class="fc-face fc-front">
+          <div style="position: absolute; top: 18px; left: 24px; display: flex; gap: 10px;">
+            <button class="btn-speaker" id="fc-speak-btn" title="원어민 발음 듣기" style="width:38px;height:38px;">
+              <i class="fa-solid fa-volume-high"></i>
+            </button>
+          </div>
+          <div style="position: absolute; top: 18px; right: 24px; display: flex; gap: 8px;">
+            <button class="btn-star" id="fc-star-btn" title="별표 북마크" style="font-size:1.3rem;">
+              <i class="fa-regular fa-star"></i>
+            </button>
+            <button class="btn-check" id="fc-check-btn" title="암기 완료" style="font-size:1.3rem;">
+              <i class="fa-regular fa-circle-check"></i>
+            </button>
+          </div>
+
+          <div class="fc-word" id="fc-word">knowledgeable</div>
+          <div class="fc-pron" id="fc-pron">ad. 아는 것이 많은</div>
+          <div class="fc-hint"><i class="fa-solid fa-arrow-rotate-right"></i> 카드를 클릭하거나 스페이스바로 뜻 확인</div>
+        </div>
+
+        <!-- 뒷면 (뜻 & 연상고리) -->
+        <div class="fc-face fc-back">
+          <div style="font-size: 0.95rem; color: #8c8075; margin-bottom: 8px; font-weight: 700;">한국어 뜻</div>
+          <div class="fc-meaning" id="fc-meaning">잘 아는, 박식한</div>
+          <div id="fc-mnemonic" style="margin-top: 14px; max-width: 90%; background: #fff9ee; border: 1.5px solid #ffe0ad; border-radius: 12px; padding: 10px 16px; font-size: 0.88rem; color: #5c4228; text-align: left; display: none;">
+            <div style="font-size: 0.74rem; font-weight: 800; background: #ffb703; color: #3b2800; padding: 2px 8px; border-radius: 999px; display: inline-flex; align-items: center; gap: 4px; margin-bottom: 4px;">
+              <i class="fa-solid fa-lightbulb"></i> 연상고리
+            </div>
+            <p id="fc-mnemonic-text" style="margin: 0; font-weight: 600;"></p>
+          </div>
+          <div class="fc-hint"><i class="fa-solid fa-arrow-rotate-left"></i> 클릭하여 다시 단어 보기</div>
+        </div>
+      </div>
+
+      <!-- 카드 하단 컨트롤 버튼 -->
+      <div class="fc-controls">
+        <button class="btn btn-outline" id="fc-prev-btn" style="width: 50px; height: 50px; border-radius: 50%; padding: 0;" title="이전 단어 (←)">
+          <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        <button class="btn btn-primary" id="fc-flip-btn" style="padding: 12px 28px;">
+          <i class="fa-solid fa-repeat"></i> 뒤집기
+        </button>
+        <button class="btn btn-outline" id="fc-next-btn" style="width: 50px; height: 50px; border-radius: 50%; padding: 0;" title="다음 단어 (→)">
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+      </div>
+
+      <!-- 자동 재생 옵션 패널 -->
+      <div style="background: #fff; border-radius: var(--radius-md); padding: 14px 20px; border: 1.5px solid var(--color-border); margin-top: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <div style="display: flex; align-items: center; gap: 14px; font-size: 0.9rem;">
+          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+            <input type="checkbox" id="fc-auto-audio-check" checked>
+            <span>넘길 때 발음 자동 재생</span>
+          </label>
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <span>간격:</span>
+            <select id="fc-interval-select" style="padding: 4px 8px; border-radius: 6px; border: 1px solid var(--color-border); background: #fff;">
+              <option value="1500">1.5초</option>
+              <option value="2000" selected>2.0초</option>
+              <option value="3000">3.0초</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="btn btn-outline" id="fc-autoplay-btn" style="padding: 8px 18px; font-size: 0.9rem;">
+          <i class="fa-solid fa-play"></i> 자동 넘김
+        </button>
+      </div>
+
+      <div style="text-align: center; margin-top: 14px; font-size: 0.82rem; color: #8c8075;">
+        단축키: <strong>[Space]</strong> 뒤집기 &nbsp;|&nbsp; <strong>[← / →]</strong> 이전/다음 단어
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-links">
+      <a href="index.html">홈</a>
+      <a href="learn.html">단어 학습</a>
+      <a href="flashcard.html">플래시카드</a>
+      <a href="quiz.html">퀴즈</a>
+      <a href="bookmark.html">내 단어장</a>
+      <a href="worksheet.html">A4 연습장</a>
+      <a href="login.html">내 학습실</a>
+    </div>
+    <p>&copy; 2026 단어야 놀자! (PlayVoca) - <a href="https://voca.chatgpts.kr/">voca.chatgpts.kr</a></p>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/voca-data.js"></script>
+<script src="js/tts.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/flashcard.js"></script>
+
+</body>
+</html>

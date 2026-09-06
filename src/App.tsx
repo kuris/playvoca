@@ -196,7 +196,7 @@ function App() {
     }
     testSupabaseConnection();
   }, []);
-  const [mode, setMode] = useState<'study' | 'quiz' | 'random-study' | 'random-quiz' | 'today'>('study');
+  const [mode, setMode] = useState<'study' | 'quiz' | 'random-study' | 'random-quiz' | 'today'>('random-study');
   const [showTodayModal, setShowTodayModal] = useState(false);
   // 오늘 학습/테스트한 단어 기록 (id 기준)
   const [todayWords, setTodayWords] = useState<number[]>(() => {

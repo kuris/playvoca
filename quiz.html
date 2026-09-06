@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>4지선다 실전 퀴즈 - 단어야 놀자!</title>
+<meta name="description" content="토익, 토플, 수능, 공무원 등 실전 4지선다 어휘 퀴즈. 즉시 채점과 오답노트 저장으로 실력을 점검하세요.">
+<link rel="canonical" href="https://voca.chatgpts.kr/quiz.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Outfit:wght@500;700;800&family=Noto+Sans+KR:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="nav-wrap">
+    <a href="index.html" class="logo">
+      <span class="logo-badge">V</span>
+      <span>단어야 놀자!</span>
+    </a>
+    <button class="nav-toggle" id="nav-toggle" aria-label="메뉴 열기"><i class="fa-solid fa-bars"></i></button>
+    <nav class="main-nav" id="main-nav"></nav>
+  </div>
+</header>
+
+<main class="section" style="padding-top: 36px;">
+  <div class="container">
+
+    <!-- 1. 퀴즈 설정 화면 -->
+    <div id="quiz-setup-view">
+      <div class="section-head">
+        <span class="eyebrow">VOCABULARY QUIZ</span>
+        <h2>실전 4지선다 어휘 퀴즈</h2>
+        <p>원하는 단어장과 문항 수를 선택하고 실력을 테스트해보세요!</p>
+      </div>
+
+      <div class="quiz-box">
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+          <div>
+            <label style="display: block; font-weight: 700; margin-bottom: 8px; color: var(--color-text);">
+              1. 출제 범위 (카테고리)
+            </label>
+            <select id="quiz-cat-select" style="width: 100%; padding: 12px; border-radius: var(--radius-sm); border: 1.5px solid var(--color-border); font-family: inherit; font-size: 1rem; background: #fff;">
+              <!-- JS 생성 -->
+            </select>
+          </div>
+
+          <div>
+            <label style="display: block; font-weight: 700; margin-bottom: 8px; color: var(--color-text);">
+              2. 문제 유형
+            </label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <label style="background: #fffcf8; border: 1.5px solid var(--color-border); padding: 14px; border-radius: var(--radius-sm); cursor: pointer; display: flex; align-items: center; gap: 10px; font-weight: 700;">
+                <input type="radio" name="quiz-mode" value="en_ko" checked>
+                <span>영단어 &rarr; 한국어 뜻</span>
+              </label>
+              <label style="background: #fffcf8; border: 1.5px solid var(--color-border); padding: 14px; border-radius: var(--radius-sm); cursor: pointer; display: flex; align-items: center; gap: 10px; font-weight: 700;">
+                <input type="radio" name="quiz-mode" value="ko_en">
+                <span>한국어 뜻 &rarr; 영단어</span>
+              </label>
+            </div>
+          </div>
+
+          <div>
+            <label style="display: block; font-weight: 700; margin-bottom: 8px; color: var(--color-text);">
+              3. 문항 수
+            </label>
+            <div style="display: flex; gap: 12px;">
+              <label style="flex: 1; background: #fffcf8; border: 1.5px solid var(--color-border); padding: 12px; border-radius: var(--radius-sm); text-align: center; cursor: pointer; font-weight: 700;">
+                <input type="radio" name="quiz-count" value="10" checked> 10문제
+              </label>
+              <label style="flex: 1; background: #fffcf8; border: 1.5px solid var(--color-border); padding: 12px; border-radius: var(--radius-sm); text-align: center; cursor: pointer; font-weight: 700;">
+                <input type="radio" name="quiz-count" value="20"> 20문제
+              </label>
+              <label style="flex: 1; background: #fffcf8; border: 1.5px solid var(--color-border); padding: 12px; border-radius: var(--radius-sm); text-align: center; cursor: pointer; font-weight: 700;">
+                <input type="radio" name="quiz-count" value="30"> 30문제
+              </label>
+            </div>
+          </div>
+
+          <button class="btn btn-primary" id="btn-start-quiz" style="padding: 14px; font-size: 1.1rem; margin-top: 10px;">
+            <i class="fa-solid fa-play"></i> 퀴즈 시작하기
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. 퀴즈 진행 화면 -->
+    <div id="quiz-play-view" style="display: none;">
+      <div class="quiz-box">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <span id="quiz-progress-text" style="font-weight: 800; font-size: 0.95rem; color: var(--color-primary-dark); font-family: var(--font-en);">문제 1 / 10</span>
+          <button class="btn-speaker" id="quiz-speak-btn" style="width:36px;height:36px;font-size:0.9rem;" title="발음 듣기">
+            <i class="fa-solid fa-volume-high"></i>
+          </button>
+        </div>
+
+        <div class="quiz-progress">
+          <div class="quiz-progress-bar" id="quiz-progress-bar"></div>
+        </div>
+
+        <div style="text-align: center; padding: 20px 0 10px;">
+          <div id="quiz-prompt" style="font-size: 0.95rem; color: #8c8075; margin-bottom: 6px;">다음 단어의 올바른 뜻을 고르세요:</div>
+          <div class="quiz-q-word" id="quiz-q-word">abandon</div>
+        </div>
+
+        <div class="quiz-choices" id="quiz-choices">
+          <!-- JS 동적 생성 -->
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. 퀴즈 결과 화면 -->
+    <div id="quiz-result-view" style="display: none;">
+      <div class="quiz-box" style="text-align: center;">
+        <div style="font-size: 3rem; margin-bottom: 12px;">🏆</div>
+        <h2 style="margin: 0 0 8px;">퀴즈 결과</h2>
+        <div style="margin-bottom: 16px;">
+          <span class="badge badge-green" id="quiz-pass-badge" style="font-size: 1rem; padding: 6px 18px;">합격!</span>
+        </div>
+
+        <div style="display: flex; justify-content: center; align-items: baseline; gap: 14px; margin-bottom: 24px;">
+          <span id="quiz-score-percent" style="font-family: var(--font-en); font-size: 3.5rem; font-weight: 800; color: var(--color-primary-dark); line-height: 1;">90점</span>
+          <span id="quiz-score-text" style="font-size: 1.1rem; color: #796c61;">9 / 10 정답</span>
+        </div>
+
+        <div id="quiz-wrong-list" style="text-align: left; margin-bottom: 24px;">
+          <!-- 틀린 문제 목록 JS 렌더링 -->
+        </div>
+
+        <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+          <button class="btn btn-secondary" id="btn-retry-wrong" style="display: none;">
+            <i class="fa-solid fa-rotate-right"></i> 틀린 문제 다시 풀기
+          </button>
+          <button class="btn btn-primary" id="btn-restart-quiz">
+            <i class="fa-solid fa-arrow-rotate-left"></i> 새 퀴즈 풀기
+          </button>
+          <a href="bookmark.html" class="btn btn-outline">
+            <i class="fa-solid fa-book"></i> 내 단어장으로 이동
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-links">
+      <a href="index.html">홈</a>
+      <a href="learn.html">단어 학습</a>
+      <a href="flashcard.html">플래시카드</a>
+      <a href="quiz.html">퀴즈</a>
+      <a href="bookmark.html">내 단어장</a>
+      <a href="worksheet.html">A4 연습장</a>
+      <a href="login.html">내 학습실</a>
+    </div>
+    <p>&copy; 2026 단어야 놀자! (PlayVoca) - <a href="https://voca.chatgpts.kr/">voca.chatgpts.kr</a></p>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/voca-data.js"></script>
+<script src="js/tts.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/quiz.js"></script>
+
+</body>
+</html>
