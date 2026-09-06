@@ -18,17 +18,6 @@
       ],
       "destination": "https://voca.chatgpts.kr/$1",
       "permanent": false
-    },
-    {
-      "source": "/((?!ads\\.txt|robots\\.txt|sitemap\\.xml).*)",
-      "has": [
-        {
-          "type": "host",
-          "value": "playvoca.vercel.app"
-        }
-      ],
-      "destination": "https://voca.chatgpts.kr/$1",
-      "permanent": false
     }
   ]
 }
