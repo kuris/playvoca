@@ -225,6 +225,10 @@ function parseThaiHtml(filePath) {
       let text = tdMatch[1]
         .replace(/<br\s*\/?>/gi, ' ')
         .replace(/&nbsp;/gi, ' ')
+        .replace(/&rarr;/gi, '→')
+        .replace(/&amp;/gi, '&')
+        .replace(/&lt;/gi, '<')
+        .replace(/&gt;/gi, '>')
         .replace(/<[^>]+>/g, '')
         .trim();
       tds.push(text);

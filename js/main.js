@@ -44,21 +44,31 @@ document.addEventListener('DOMContentLoaded', function () {
 
   let currentHeroWord = null;
 
-  function setRandomWord() {
+  function setRandomWord(preferFeatured = false) {
     if (allWords.length === 0) return;
-    const randomIndex = Math.floor(Math.random() * allWords.length);
-    currentHeroWord = allWords[randomIndex];
+    if (preferFeatured) {
+      const featured = allWords.filter(w => w.lang === 'en' && w.tip && w.word.length > 3);
+      if (featured.length > 0) {
+        currentHeroWord = featured[Math.floor(Math.random() * featured.length)];
+      } else {
+        const engWords = allWords.filter(w => w.lang === 'en');
+        currentHeroWord = engWords.length > 0 ? engWords[Math.floor(Math.random() * engWords.length)] : allWords[0];
+      }
+    } else {
+      const randomIndex = Math.floor(Math.random() * allWords.length);
+      currentHeroWord = allWords[randomIndex];
+    }
 
     if (wordEl) wordEl.textContent = currentHeroWord.word;
     if (meaningEl) meaningEl.textContent = currentHeroWord.meaning;
-    if (pronEl) pronEl.textContent = currentHeroWord.pron || '';
+    if (pronEl) pronEl.textContent = (currentHeroWord.pron || '').replace(/&rarr;/g, '→').replace(/&amp;/g, '&');
     if (catBadgeEl) {
       const catObj = categories.find(c => c.id === currentHeroWord.cat);
       catBadgeEl.textContent = catObj ? `${catObj.icon} ${catObj.name}` : currentHeroWord.cat;
     }
   }
 
-  setRandomWord();
+  setRandomWord(true);
 
   if (speakerBtn) {
     speakerBtn.addEventListener('click', () => {
