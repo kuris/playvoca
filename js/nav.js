@@ -31,7 +31,7 @@
   }
 
   function buildDesktop(here) {
-    return MENU.map(function (item, i) {
+    const desktopHtml = MENU.map(function (item, i) {
       if (!item.children) {
         const active = item.href === here ? ' class="active"' : '';
         return `<li><a href="${item.href}"${active}>${item.icon} ${item.label}</a></li>`;
@@ -40,7 +40,7 @@
       return `
         <li class="nav-group">
           <button class="nav-group-btn${active ? ' active' : ''}" aria-expanded="false" data-group="${i}">
-            ${item.icon} ${item.label} <i class="fa-solid fa-chevron-down" style="font-size:0.75rem;"></i>
+            ${item.icon} ${item.label} <i class="fa-solid fa-chevron-down"></i>
           </button>
           <div class="nav-dropdown">
             ${item.children.map(c => `
@@ -51,10 +51,27 @@
           </div>
         </li>`;
     }).join('');
+
+    const familyDesktop = `
+      <li class="nav-family-item">
+        <div class="family-nav-wrap">
+          <button type="button" class="family-btn" id="family-btn">
+            다른 놀자 서비스 <span style="font-size: 10px; margin-left: 2px;">▾</span>
+          </button>
+          <div class="family-dropdown" id="family-dropdown">
+            <a href="https://mindtest.chatgpts.kr" target="_blank" rel="noopener"><span>🧠</span> <span>마인드테스트</span></a>
+            <a href="https://hanja.chatgpts.kr" target="_blank" rel="noopener"><span>📖</span> <span>한자야 놀자</span></a>
+            <a href="https://fortune.chatgpts.kr" target="_blank" rel="noopener"><span>🔮</span> <span>운세야 놀자</span></a>
+            <a href="https://chatgpts.kr" target="_blank" rel="noopener"><span>🏠</span> <span>chatgpts.kr</span></a>
+          </div>
+        </div>
+      </li>`;
+
+    return desktopHtml + familyDesktop;
   }
 
   function buildMobile(here) {
-    return MENU.map(function (item) {
+    const mobileHtml = MENU.map(function (item) {
       if (!item.children) {
         return `<li><a href="${item.href}"${item.href === here ? ' class="active"' : ''}>${item.icon} ${item.label}</a></li>`;
       }
@@ -66,6 +83,19 @@
           </ul>
         </li>`;
     }).join('');
+
+    const familyMobile = `
+      <li class="m-group" style="border-top: 2px solid rgba(109, 40, 217, 0.25); margin-top: 10px; padding-top: 10px;">
+        <span class="m-group-title" style="color: #6D28D9; font-weight: 800;">🎡 다른 놀자 서비스</span>
+        <ul class="m-sub">
+          <li><a href="https://mindtest.chatgpts.kr" target="_blank" rel="noopener">🧠 마인드테스트</a></li>
+          <li><a href="https://hanja.chatgpts.kr" target="_blank" rel="noopener">📖 한자야 놀자</a></li>
+          <li><a href="https://fortune.chatgpts.kr" target="_blank" rel="noopener">🔮 운세야 놀자</a></li>
+          <li><a href="https://chatgpts.kr" target="_blank" rel="noopener">🏠 chatgpts.kr</a></li>
+        </ul>
+      </li>`;
+
+    return mobileHtml + familyMobile;
   }
 
   function initNav() {
@@ -83,7 +113,21 @@
     const icon = navToggle.querySelector('i');
     navToggle.setAttribute('aria-expanded', 'false');
 
+    const familyBtn = document.getElementById('family-btn');
+    const familyDropdown = document.getElementById('family-dropdown');
+    if (familyBtn && familyDropdown) {
+      familyBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        closeAllDropdowns();
+        familyDropdown.classList.toggle('show');
+      });
+      document.addEventListener('click', function () {
+        familyDropdown.classList.remove('show');
+      });
+    }
+
     function closeAllDropdowns() {
+      if (familyDropdown) familyDropdown.classList.remove('show');
       mainNav.querySelectorAll('.nav-group.open').forEach(g => {
         g.classList.remove('open');
         const b = g.querySelector('.nav-group-btn');
