@@ -9,12 +9,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Outfit:wght@500;700;800&family=Noto+Sans+KR:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
-<link rel="stylesheet" href="css/style.css?v=20260908c">
+<link rel="stylesheet" href="css/style.css?v=20260908d">
   <meta name="google-adsense-account" content="ca-pub-3321070604000141">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3321070604000141&tfat=1" crossorigin="anonymous"></script>
   <script>
     (window.adsbygoogle = window.adsbygoogle || []).requestNonPersonalizedAds = 1;
   </script>
+  <link rel="stylesheet" href="css/cg-auth.css?v=20260908d">
 </head>
 <body>
 
@@ -37,17 +38,18 @@
       <div class="section-head" style="margin-bottom: 24px;">
         <span class="eyebrow">MY STUDY ROOM</span>
         <h2>로그인하고 학습 기록 저장하기</h2>
-        <p>회원가입을 하면 <strong>암기한 단어·북마크·퀴즈 점수</strong>가 클라우드에 안전하게 저장돼요.<br>한자야 놀자(playhanja) 계정이 있다면 그대로 로그인할 수 있습니다!</p>
+        <p>Google 로그인 후 다음에 이어서 공부할 수 있습니다.<br><strong>암기한 단어·북마크·퀴즈 점수</strong>가 클라우드에 저장되고, 다른 놀자 서비스와 같은 계정으로 이어집니다!</p>
       </div>
 
       <div class="auth-card">
-        <div class="auth-tabs">
+        <!-- 이메일/비밀번호 로그인은 사용하지 않습니다. Google 로그인만 사용합니다. -->
+        <div class="auth-tabs" style="display:none;">
           <button class="auth-tab active" data-tab="login"><i class="fa-solid fa-right-to-bracket"></i> 로그인</button>
           <button class="auth-tab" data-tab="signup"><i class="fa-solid fa-user-plus"></i> 회원가입</button>
         </div>
 
         <!-- 로그인 폼 -->
-        <form class="auth-form" id="login-form">
+        <form class="auth-form" id="login-form" style="display:none;">
           <label>이메일
             <input type="email" id="login-email" required placeholder="example@email.com" autocomplete="email">
           </label>
@@ -78,8 +80,7 @@
 
         <!-- 구글 로그인 -->
         <div class="auth-oauth">
-          <div class="auth-divider"><span>또는</span></div>
-          <button type="button" class="btn-google" id="google-login-btn">
+                    <button type="button" class="btn-google" id="google-login-btn">
             <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
               <path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.9 2.4 30.4 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.2C12.4 13.6 17.7 9.5 24 9.5z"/>
               <path fill="#4285F4" d="M46.1 24.6c0-1.6-.1-3.1-.4-4.6H24v9.1h12.4c-.5 2.9-2.2 5.3-4.6 6.9l7.2 5.6c4.2-3.9 6.6-9.6 6.6-17z"/>
@@ -160,17 +161,18 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase-client.js?v=20260908c"></script>
-<script src="js/voca-data.js?v=20260908c"></script>
-<script src="js/tts.js?v=20260908c"></script>
-<script src="js/auth.js?v=20260908c"></script>
-<script src="js/nav.js?v=20260908c"></script>
-<script src="js/login.js?v=20260908c"></script>
+<script src="js/supabase-client.js?v=20260908d"></script>
+<script src="js/voca-data.js?v=20260908d"></script>
+<script src="js/tts.js?v=20260908d"></script>
+<script src="js/cg-auth.js?v=20260908d" data-service="voca" data-adopt="true" data-hide-when-logged-in="true"></script>
+<script src="js/auth.js?v=20260908d"></script>
+<script src="js/nav.js?v=20260908d"></script>
+<script src="js/login.js?v=20260908d"></script>
 
-  <script defer src="/_vercel/insights/script.js?v=20260908c"></script>
-  <script defer src="/_vercel/speed-insights/script.js?v=20260908c"></script>
+  <script defer src="/_vercel/insights/script.js?v=20260908d"></script>
+  <script defer src="/_vercel/speed-insights/script.js?v=20260908d"></script>
 
 <!-- 화면 조회 로그 수집 (관리자 통계 전용 / 사용자 기능과 무관) -->
-<script defer src="/js/track.js?v=20260908c" data-service="voca"></script>
+<script defer src="/js/track.js?v=20260908d" data-service="voca"></script>
 </body>
 </html>

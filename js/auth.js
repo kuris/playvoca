@@ -359,11 +359,19 @@
         });
       }
     } else {
-      box.innerHTML = `
-        <a href="login.html" class="btn-nav-login">
-          <i class="fa-solid fa-user"></i> <span>로그인</span>
-        </a>
-      `;
+      // ---------- 공통 로그인 모듈(CGAuth) 위임 ----------
+      // 비로그인 상태에서는 공통 Google 로그인 버튼을 보여 줍니다.
+      // 로그인 후에는 위쪽의 기존 드롭다운 UI 가 그대로 사용됩니다.
+      if (window.CGAuth && window.CGAuth.__loaded) {
+        if (!box.querySelector('.cg-auth')) box.innerHTML = '';
+        window.CGAuth.mountAuthUI(box);
+      } else {
+        box.innerHTML = `
+          <a href="login.html" class="btn-nav-login">
+            <i class="fa-solid fa-user"></i> <span>로그인</span>
+          </a>
+        `;
+      }
     }
   }
 
