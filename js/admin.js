@@ -129,9 +129,20 @@
     return `<tr><td colspan="${colspan}">${emptyBox(message, sub)}</td></tr>`;
   }
 
+  // 경로 정규화
+  // Vercel cleanUrls 때문에 같은 화면이 '/quiz' 와 '/quiz.html' 로 나뉘어 기록될 수
+  // 있습니다. 표시·집계 단계에서 '.html' 형태로 통일해 하나로 합칩니다.
+  // (track.js 수정 이전에 쌓인 로그도 함께 병합됩니다)
+  function normalizePath(path) {
+    let clean = String(path || '').replace(/^\/+/, '');
+    if (clean === '' || clean.slice(-1) === '/') clean += 'index.html';
+    else if (!/\.[a-zA-Z0-9]+$/.test(clean)) clean += '.html';
+    return clean;
+  }
+
   // 화면 경로 → 사람이 읽는 이름
   function pageTitleOf(path, fallbackTitle) {
-    const clean = String(path || '').replace(/^\//, '') || 'index.html';
+    const clean = normalizePath(path);
     const map = CFG.pageTitles || {};
     if (map[clean]) return map[clean];
     // result/burnout-1.html 처럼 하위 폴더인 경우 폴더 규칙으로 한 번 더 시도
@@ -525,7 +536,7 @@
     const daysMap = {};
 
     list.forEach(function (r) {
-      const p = String(r.path || '').replace(/^\//, '') || 'index.html';
+      const p = normalizePath(r.path);
       if (!pagesMap[p]) {
         pagesMap[p] = { path: p, title: r.page_title || '', count: 0, users: {}, last: r.created_at };
       }
@@ -658,7 +669,7 @@
     }
 
     node.innerHTML = list.slice(0, 20).map(function (r) {
-      const p = String(r.path || '').replace(/^\//, '');
+      const p = normalizePath(r.path);
       return `
         <div class="admin-feed-item">
           <div>
@@ -1004,12 +1015,12 @@
     const seen = {};
     const out = [];
     cachedPageViews.forEach(function (r) {
-      const p = String(r.path || '').replace(/^\//, '');
+      const p = normalizePath(r.path);
       if (seen[p]) return;
       const title = pageTitleOf(p, r.page_title);
       if (p.toLowerCase().indexOf(lower) === -1 && String(title).indexOf(q) === -1) return;
       seen[p] = 1;
-      const count = cachedPageViews.filter(x => String(x.path || '').replace(/^\//, '') === p).length;
+      const count = cachedPageViews.filter(x => normalizePath(x.path) === p).length;
       out.push(`<strong>${escapeHtml(title)}</strong> <code>/${escapeHtml(p)}</code> — 최근 로그 ${num(count)}회`);
     });
     // 로그에 없더라도 설정된 화면 목록에서 이름으로 찾기
