@@ -1,7 +1,7 @@
 /* ============================================================
    단어야 놀자! (PlayVoca) - 공통 상단 내비게이션 (nav.js)
    - PC: 5개 그룹 + 드롭다운 / 태블릿·모바일: 햄버거 서랍
-   - 화면 조회수 및 접속 시간대 통계 수집 (voca.page_views)
+   - 화면 조회수 수집은 js/track.js 가 담당합니다 (이 파일은 내비게이션만)
    ============================================================ */
 
 (function () {
@@ -200,54 +200,15 @@
     });
   }
 
-  // ---------- 화면 조회수 및 접속 시간대 통계 수집 (voca.page_views) ----------
-  function trackPageView() {
-    try {
-      const f = location.pathname.split('/').pop() || 'index.html';
-      if (f === 'admin.html') return; // 관리자 페이지 제외
-      const title = document.title.replace(' - 단어야 놀자!', '').trim() || f;
-      const now = new Date();
-      const hour = now.getHours();
-      const day = now.toISOString().slice(0, 10);
-
-      // 1) 로컬 통계
-      try {
-        const STATS_KEY = 'voca_local_pv_stats';
-        const stats = JSON.parse(localStorage.getItem(STATS_KEY) || '{"pages":{},"hours":{},"days":{},"recent":[]}');
-        stats.pages[f] = (stats.pages[f] || 0) + 1;
-        stats.hours[hour] = (stats.hours[hour] || 0) + 1;
-        stats.days[day] = (stats.days[day] || 0) + 1;
-        stats.recent = (stats.recent || []).slice(0, 29);
-        stats.recent.unshift({ path: f, title: title, time: now.toISOString() });
-        localStorage.setItem(STATS_KEY, JSON.stringify(stats));
-      } catch (e) {}
-
-      // 2) Supabase 실시간 서버 통계
-      function sendToSupabase() {
-        if (!window.sb) return;
-        const uid = window.VocaAuth && window.VocaAuth.getUser ? (window.VocaAuth.getUser() || {}).id : null;
-        window.sb.from('page_views').insert({
-          path: '/' + f,
-          page_title: title,
-          referrer: document.referrer || null,
-          user_id: uid || null,
-          hour: hour,
-          day: day
-        }).then(() => {}, () => {});
-      }
-
-      if (window.sb) {
-        sendToSupabase();
-      } else {
-        window.addEventListener('load', () => setTimeout(sendToSupabase, 600), { once: true });
-      }
-    } catch (e) {}
-  }
+  // ---------- 화면 조회수 수집은 js/track.js 가 담당합니다 ----------
+  // 예전에는 이 파일에서 voca.page_views 로도 기록했지만,
+  // 관리자 통계가 public.page_views(service='voca') 를 읽으므로 중복이었습니다.
+  // 페이지뷰마다 불필요한 요청이 한 번 더 나가 수집 지점을 track.js 로 일원화했습니다.
+  // (내비게이션 동작에는 영향 없음)
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => { initNav(); trackPageView(); });
+    document.addEventListener('DOMContentLoaded', initNav);
   } else {
     initNav();
-    trackPageView();
   }
 })();
