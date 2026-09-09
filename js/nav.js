@@ -59,7 +59,7 @@
             다른 놀자 서비스 <span style="font-size: 10px; margin-left: 2px;">▾</span>
           </button>
           <div class="family-dropdown" id="family-dropdown">
-            <a href="https://mindtest.chatgpts.kr" target="_blank" rel="noopener"><span>🧠</span> <span>마인드테스트</span></a>
+            <a href="https://mind.chatgpts.kr" target="_blank" rel="noopener"><span>🧠</span> <span>마인드테스트</span></a>
             <a href="https://hanja.chatgpts.kr" target="_blank" rel="noopener"><span>📖</span> <span>한자야 놀자</span></a>
             <a href="https://fortune.chatgpts.kr" target="_blank" rel="noopener"><span>🔮</span> <span>운세야 놀자</span></a>
             <a href="https://history.chatgpts.kr" target="_blank" rel="noopener"><span>📜</span> <span>역사야 놀자</span></a>
@@ -67,6 +67,7 @@
             <a href="https://money.chatgpts.kr" target="_blank" rel="noopener"><span>💰</span> <span>머니야 놀자</span></a>
             <a href="https://tools.chatgpts.kr" target="_blank" rel="noopener"><span>🛠️</span> <span>문서야 놀자</span></a>
             <a href="https://bible.chatgpts.kr" target="_blank" rel="noopener"><span>✝️</span> <span>성경아 놀자</span></a>
+            <a href="https://maum.chatgpts.kr" target="_blank" rel="noopener"><span>🪷</span> <span>마음아 놀자</span></a>
             <a href="https://chatgpts.kr" target="_blank" rel="noopener"><span>🏠</span> <span>chatgpts.kr</span></a>
           </div>
         </div>
@@ -93,7 +94,7 @@
       <li class="m-group" style="border-top: 2px solid rgba(109, 40, 217, 0.25); margin-top: 10px; padding-top: 10px;">
         <span class="m-group-title" style="color: #6D28D9; font-weight: 800;">🎡 다른 놀자 서비스</span>
         <ul class="m-sub">
-          <li><a href="https://mindtest.chatgpts.kr" target="_blank" rel="noopener">🧠 마인드테스트</a></li>
+          <li><a href="https://mind.chatgpts.kr" target="_blank" rel="noopener">🧠 마인드테스트</a></li>
           <li><a href="https://hanja.chatgpts.kr" target="_blank" rel="noopener">📖 한자야 놀자</a></li>
           <li><a href="https://fortune.chatgpts.kr" target="_blank" rel="noopener">🔮 운세야 놀자</a></li>
           <li><a href="https://history.chatgpts.kr" target="_blank" rel="noopener">📜 역사야 놀자</a></li>
@@ -101,6 +102,7 @@
           <li><a href="https://money.chatgpts.kr" target="_blank" rel="noopener">💰 머니야 놀자</a></li>
           <li><a href="https://tools.chatgpts.kr" target="_blank" rel="noopener">🛠️ 문서야 놀자</a></li>
           <li><a href="https://bible.chatgpts.kr" target="_blank" rel="noopener">✝️ 성경아 놀자</a></li>
+          <li><a href="https://maum.chatgpts.kr" target="_blank" rel="noopener">🪷 마음아 놀자</a></li>
           <li><a href="https://chatgpts.kr" target="_blank" rel="noopener">🏠 chatgpts.kr</a></li>
         </ul>
       </li>`;
