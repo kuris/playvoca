@@ -92,9 +92,26 @@
     } catch (e) {}
   }
 
+  // 로그인 후 돌아올 주소 = 지금 보고 있는 페이지 (토큰 파편 제거)
+  // 공통 모듈 cg-auth.js 의 currentCleanUrl() 과 같은 규칙입니다.
+  // 예전에는 login.html 로 보내서, 학습하던 자리로 돌아오지 못했습니다.
+  function getCurrentPageUrl() {
+    try {
+      const u = new URL(location.href);
+      u.hash = '';
+      u.searchParams.delete('code');
+      u.searchParams.delete('error');
+      u.searchParams.delete('error_description');
+      const qs = u.searchParams.toString();
+      return u.origin + u.pathname + (qs ? '?' + qs : '');
+    } catch (e) {
+      return location.origin + location.pathname;
+    }
+  }
+
   async function signInWithGoogle(redirectTo) {
     if (!isReady()) throw new Error('서버 연결을 준비하지 못했어요.');
-    const target = redirectTo || getVocaRedirectUrl();
+    const target = redirectTo || getCurrentPageUrl();
     const { error } = await sb().auth.signInWithOAuth({
       provider: 'google',
       options: { redirectTo: target }
