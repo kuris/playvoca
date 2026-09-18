@@ -52,26 +52,9 @@
         </li>`;
     }).join('');
 
+    // 15종 풀셋 패밀리는 cg-family.js 공유 모듈이 렌더
     const familyDesktop = `
-      <li class="nav-family-item">
-        <div class="family-nav-wrap">
-          <button type="button" class="family-btn" id="family-btn">
-            다른 놀자 서비스 <span style="font-size: 10px; margin-left: 2px;">▾</span>
-          </button>
-          <div class="family-dropdown" id="family-dropdown">
-            <a href="https://mind.chatgpts.kr" target="_blank" rel="noopener"><span>🧠</span> <span>마인드테스트</span></a>
-            <a href="https://hanja.chatgpts.kr" target="_blank" rel="noopener"><span>📖</span> <span>한자야 놀자</span></a>
-            <a href="https://fortune.chatgpts.kr" target="_blank" rel="noopener"><span>🔮</span> <span>운세야 놀자</span></a>
-            <a href="https://history.chatgpts.kr" target="_blank" rel="noopener"><span>📜</span> <span>역사야 놀자</span></a>
-            <a href="https://work.chatgpts.kr" target="_blank" rel="noopener"><span>💼</span> <span>워크야 놀자</span></a>
-            <a href="https://money.chatgpts.kr" target="_blank" rel="noopener"><span>💰</span> <span>머니야 놀자</span></a>
-            <a href="https://tools.chatgpts.kr" target="_blank" rel="noopener"><span>🛠️</span> <span>문서야 놀자</span></a>
-            <a href="https://bible.chatgpts.kr" target="_blank" rel="noopener"><span>✝️</span> <span>성경아 놀자</span></a>
-            <a href="https://maum.chatgpts.kr" target="_blank" rel="noopener"><span>🪷</span> <span>마음아 놀자</span></a>
-            <a href="https://chatgpts.kr" target="_blank" rel="noopener"><span>🏠</span> <span>chatgpts.kr</span></a>
-          </div>
-        </div>
-      </li>`;
+      <li class="nav-family-item"><div data-cg-family data-current="voca"></div></li>`;
 
     return desktopHtml + familyDesktop;
   }
@@ -93,18 +76,7 @@
     const familyMobile = `
       <li class="m-group" style="border-top: 2px solid rgba(109, 40, 217, 0.25); margin-top: 10px; padding-top: 10px;">
         <span class="m-group-title" style="color: #6D28D9; font-weight: 800;">🎡 다른 놀자 서비스</span>
-        <ul class="m-sub">
-          <li><a href="https://mind.chatgpts.kr" target="_blank" rel="noopener">🧠 마인드테스트</a></li>
-          <li><a href="https://hanja.chatgpts.kr" target="_blank" rel="noopener">📖 한자야 놀자</a></li>
-          <li><a href="https://fortune.chatgpts.kr" target="_blank" rel="noopener">🔮 운세야 놀자</a></li>
-          <li><a href="https://history.chatgpts.kr" target="_blank" rel="noopener">📜 역사야 놀자</a></li>
-          <li><a href="https://work.chatgpts.kr" target="_blank" rel="noopener">💼 워크야 놀자</a></li>
-          <li><a href="https://money.chatgpts.kr" target="_blank" rel="noopener">💰 머니야 놀자</a></li>
-          <li><a href="https://tools.chatgpts.kr" target="_blank" rel="noopener">🛠️ 문서야 놀자</a></li>
-          <li><a href="https://bible.chatgpts.kr" target="_blank" rel="noopener">✝️ 성경아 놀자</a></li>
-          <li><a href="https://maum.chatgpts.kr" target="_blank" rel="noopener">🪷 마음아 놀자</a></li>
-          <li><a href="https://chatgpts.kr" target="_blank" rel="noopener">🏠 chatgpts.kr</a></li>
-        </ul>
+        <div data-cg-family="flat" data-current="voca"></div>
       </li>`;
 
     return mobileHtml + familyMobile;
@@ -121,25 +93,15 @@
       <ul class="nav-desktop">${buildDesktop(here)}</ul>
       <ul class="nav-mobile">${buildMobile(here)}</ul>
     `;
+    if (window.CGFamily) window.CGFamily.autoInit();
 
     const icon = navToggle.querySelector('i');
     navToggle.setAttribute('aria-expanded', 'false');
-
-    const familyBtn = document.getElementById('family-btn');
-    const familyDropdown = document.getElementById('family-dropdown');
-    if (familyBtn && familyDropdown) {
-      familyBtn.addEventListener('click', function (e) {
-        e.stopPropagation();
-        closeAllDropdowns();
-        familyDropdown.classList.toggle('show');
-      });
-      document.addEventListener('click', function () {
-        familyDropdown.classList.remove('show');
-      });
-    }
+    // 패밀리 드롭다운 토글은 cg-family.js 자체 처리
 
     function closeAllDropdowns() {
-      if (familyDropdown) familyDropdown.classList.remove('show');
+      var openFam = document.querySelector('.cg-fam-wrap.open');
+      if (openFam) openFam.classList.remove('open');
       mainNav.querySelectorAll('.nav-group.open').forEach(g => {
         g.classList.remove('open');
         const b = g.querySelector('.nav-group-btn');
