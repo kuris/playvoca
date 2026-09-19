@@ -52,7 +52,7 @@
         </li>`;
     }).join('');
 
-    // 15종 풀셋 패밀리는 cg-family.js 공유 모듈이 렌더
+    // 14종 패밀리는 cg-family.js 공유 모듈이 렌더
     const familyDesktop = `
       <li class="nav-family-item"><div data-cg-family data-current="voca"></div></li>`;
 
